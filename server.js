@@ -1,12 +1,7 @@
 const http = require('http');
 const { v4: uuidv4 } = require('uuid');
 
-const todos = [
-  {
-    title: "this is a task",
-    id: uuidv4()
-  }
-];
+const todos = [];
 
 const requestListener = (req, res) => {
   console.log(req.method, req.url);
@@ -21,10 +16,6 @@ const requestListener = (req, res) => {
   req.on('data', chunk => {
     body += chunk;
   })
-  req.on('end', () => {
-    console.log(body);
-    console.log(JSON.parse(body).title)
-  })
 
   if (req.url == '/todos' && req.method == 'GET') {
     res.writeHead(200, header);
@@ -34,11 +25,21 @@ const requestListener = (req, res) => {
     }));
     res.end();
   } else if (req.url == '/todos' && req.method == 'POST') {
-    res.writeHead(200, header);
-    res.write(JSON.stringify({
-      "status": "success",
-      "data": []
-    }))
+    req.on('end', () => {
+      console.log(body);
+      const title = JSON.parse(body).title
+      const todo = {
+        "title": title,
+        "id": uuidv4()
+      }
+      todos.push(todo);
+      res.writeHead(200, header);
+      res.write(JSON.stringify({
+        "status": "success",
+        "data": todos
+      }))
+      res.end();
+    })
   } else if (req.method == "OPTIONS") {
     // 回應 CORS 預檢請求（Preflight）：瀏覽器在跨來源的非簡單請求前，會先以 OPTIONS 方法詢問
     res.writeHead(200, header);

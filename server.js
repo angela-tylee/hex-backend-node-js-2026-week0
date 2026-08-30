@@ -16,6 +16,16 @@ const requestListener = (req, res) => {
     'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
     'Content-Type': 'application/json'
   };
+
+  let body = "";
+  req.on('data', chunk => {
+    body += chunk;
+  })
+  req.on('end', () => {
+    console.log(body);
+    console.log(JSON.parse(body).title)
+  })
+
   if (req.url == '/todos' && req.method == 'GET') {
     res.writeHead(200, header);
     res.write(JSON.stringify({

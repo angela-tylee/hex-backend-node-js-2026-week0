@@ -1,4 +1,12 @@
 const http = require('http');
+const { v4: uuidv4 } = require('uuid');
+
+const todos = [
+  {
+    title: "this is a task",
+    id: uuidv4()
+  }
+];
 
 const requestListener = (req, res) => {
   console.log(req.method, req.url);
@@ -8,11 +16,11 @@ const requestListener = (req, res) => {
     'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
     'Content-Type': 'application/json'
   };
-  if (req.url == '/' && req.method == 'GET') {
+  if (req.url == '/todos' && req.method == 'GET') {
     res.writeHead(200, header);
     res.write(JSON.stringify({
       "status": "success",
-      "data": [],
+      "data": todos,
     }));
     res.end();
   } else if (req.method == "OPTIONS") {

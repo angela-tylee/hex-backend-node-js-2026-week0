@@ -53,6 +53,7 @@ const requestListener = (req, res) => {
 
     })
   } else if (req.url == '/todos' && req.method == 'DELETE') {
+    // 刪除所有待辦
     todos.length = 0;
     res.writeHead(200, header);
     res.write(JSON.stringify({
@@ -60,6 +61,22 @@ const requestListener = (req, res) => {
       "data": todos
     }))
     res.end();
+  } else if (req.url.startsWith('/todos/') && req.method == 'DELETE') {
+    // 刪除單筆待辦
+    const id = req.url.split('/').pop();
+    const index = todos.findIndex(element => element.id == id);
+    console.log(id, index)
+    if (index !== -1) {
+      todos.splice(index, 1);
+      res.writeHead(200, header);
+      res.write(JSON.stringify({
+        "status": "success",
+        "data": todos
+      }))
+      res.end();
+    } else {
+      errorHandle(res);
+    }
   } else if (req.method == "OPTIONS") {
     // 回應 CORS 預檢請求（Preflight）：瀏覽器在跨來源的非簡單請求前，會先以 OPTIONS 方法詢問
     res.writeHead(200, header);

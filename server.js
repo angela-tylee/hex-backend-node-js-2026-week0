@@ -27,18 +27,39 @@ const requestListener = (req, res) => {
   } else if (req.url == '/todos' && req.method == 'POST') {
     req.on('end', () => {
       console.log(body);
-      const title = JSON.parse(body).title
-      const todo = {
-        "title": title,
-        "id": uuidv4()
+      try {
+        const title = JSON.parse(body).title
+        if (title !== undefined) {
+          const todo = {
+            "title": title,
+            "id": uuidv4()
+          }
+          todos.push(todo);
+          res.writeHead(200, header);
+          res.write(JSON.stringify({
+            "status": "success",
+            "data": todos
+          }))
+          res.end();
+        } else {
+          // 處理異常行為：title 為空值
+          res.writeHead(400, header);
+          res.write(JSON.stringify({
+            "status": "false",
+            "data": "欄位格式錯誤"
+          }))
+          res.end();
+        }
+      } catch (error) {
+        // 處理異常行為： body 欄位格式錯誤
+        res.writeHead(400, header);
+        res.write(JSON.stringify({
+          "status": "false",
+          "data": "欄位格式錯誤"
+        }))
+        res.end();
       }
-      todos.push(todo);
-      res.writeHead(200, header);
-      res.write(JSON.stringify({
-        "status": "success",
-        "data": todos
-      }))
-      res.end();
+
     })
   } else if (req.method == "OPTIONS") {
     // 回應 CORS 預檢請求（Preflight）：瀏覽器在跨來源的非簡單請求前，會先以 OPTIONS 方法詢問

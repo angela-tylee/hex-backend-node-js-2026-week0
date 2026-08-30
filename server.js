@@ -77,6 +77,29 @@ const requestListener = (req, res) => {
     } else {
       errorHandle(res);
     }
+  } else if (req.url.startsWith("/todos/") && req.method == "PATCH") {
+    req.on('end', () => {
+      try {
+        const todo = JSON.parse(body).title;
+        const id = req.url.split('/').pop();
+        const index = todos.findIndex(element => element.id == id);
+        console.log(todo, id, index);
+
+        if (todo !== undefined && index !== -1) {
+          todos[index].title = todo
+          res.writeHead(200, header);
+          res.write(JSON.stringify({
+            "status": "success",
+            "data": todos,
+          }))
+          res.end();
+        } else {
+          errorHandle(res);
+        }
+      } catch (error) {
+        errorHandle(res);
+      }
+    })
   } else if (req.method == "OPTIONS") {
     // 回應 CORS 預檢請求（Preflight）：瀏覽器在跨來源的非簡單請求前，會先以 OPTIONS 方法詢問
     res.writeHead(200, header);
@@ -92,6 +115,6 @@ const requestListener = (req, res) => {
 }
 
 const server = http.createServer(requestListener);
-server.listen(3005, () => {
+server.listen(process.env.PORT || 3005, () => {
   console.log('Server running at http://localhost:3005');
 });

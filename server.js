@@ -8,12 +8,16 @@ const requestListener = (req, res) => {
     'Access-Control-Allow-Methods': 'PATCH, POST, GET,OPTIONS,DELETE',
     'Content-Type': 'application/json'
   };
-  if (req.url == '/') {
+  if (req.url == '/' && req.method == 'GET') {
     res.writeHead(200, header);
     res.write(JSON.stringify({
       "status": "success",
       "data": [],
     }));
+    res.end();
+  } else if (req.method == "OPTIONS") {
+    // 回應 CORS 預檢請求（Preflight）：瀏覽器在跨來源的非簡單請求前，會先以 OPTIONS 方法詢問
+    res.writeHead(200, header);
     res.end();
   } else {
     res.writeHead(404, header);

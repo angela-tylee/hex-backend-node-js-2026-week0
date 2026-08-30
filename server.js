@@ -1,5 +1,6 @@
 const http = require('http');
 const { v4: uuidv4 } = require('uuid');
+const errorHandle = require('./errorHandle');
 
 const todos = [];
 
@@ -43,21 +44,11 @@ const requestListener = (req, res) => {
           res.end();
         } else {
           // 處理異常行為：title 為空值
-          res.writeHead(400, header);
-          res.write(JSON.stringify({
-            "status": "false",
-            "data": "欄位格式錯誤"
-          }))
-          res.end();
+          errorHandle(res);
         }
       } catch (error) {
         // 處理異常行為： body 欄位格式錯誤
-        res.writeHead(400, header);
-        res.write(JSON.stringify({
-          "status": "false",
-          "data": "欄位格式錯誤"
-        }))
-        res.end();
+        errorHandle(res);
       }
 
     })

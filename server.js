@@ -52,6 +52,14 @@ const requestListener = (req, res) => {
       }
 
     })
+  } else if (req.url == '/todos' && req.method == 'DELETE') {
+    todos.length = 0;
+    res.writeHead(200, header);
+    res.write(JSON.stringify({
+      "status": "success",
+      "data": todos
+    }))
+    res.end();
   } else if (req.method == "OPTIONS") {
     // 回應 CORS 預檢請求（Preflight）：瀏覽器在跨來源的非簡單請求前，會先以 OPTIONS 方法詢問
     res.writeHead(200, header);

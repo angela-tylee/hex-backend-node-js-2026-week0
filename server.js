@@ -1,9 +1,19 @@
 const http = require('http');
 
 const requestListener = (req, res) => {
-  res.writeHead(200,{"Content-Type":"text/plain"});
-  res.write("hello");
-  res.end();
+  console.log(req.method, req.url);
+  const header = {
+    "Content-Type": "text/plain"
+  };
+  if (req.url == '/') {
+    res.writeHead(200, header);
+    res.write("index");
+    res.end();
+  } else {
+    res.writeHead(404, header);
+    res.write("此頁面不存在");
+    res.end();
+  }
 }
 
 const server = http.createServer(requestListener);
